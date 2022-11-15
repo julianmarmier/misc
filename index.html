@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<script>
+  function preventFormSubmit() {
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+      forms[i].addEventListener('submit', function(event) {
+        event.preventDefault();
+      });
+    }
+  }
+    
+    window.addEventListener('load', preventFormSubmit);
+
+    function handleFormSubmit(formObject) {
+      const info = document.getElementById("retInfo")
+      const val = document.getElementById("email").value
+      info.innerHTML = "En attente d'une réponse du serveur..."
+
+      fetch(`https://script.google.com/macros/s/AKfycbze6eLOslPF4UadWYAvUccxHaj8sOCtA2dGRz3JpnrlppRtR5GV-xR3arafuqBmScg/exec?email=${val}`).then(res => handleSuccess(res))
+    }
+
+    async function handleSuccess(returnInfo) {
+      const info = await returnInfo.json() //JSON.parse(returnInfo)
+      const elem = document.getElementById("retInfo")
+      console.log(info)
+
+      if (info) {
+        elem.innerHTML = `Un lien d'invitation a été envoyé à <b>${info.email}</b>.`
+      } else {
+        elem.innerHTML = "Désolé, l'adresse n'a pas été retrouvée. <br> Veuillez réessayer et corriger d'éventuelles fautes d'orthographe."
+      }
+    }
+
+    // function sendStuff() {
+    //   const val = document.getElementById("email").value
+    //   const info = document.getElementById("retInfo")
+
+    //   info.innerHTML = "En attente d'une réponse du serveur..."
+
+    //   google.script.run.withSuccessHandler().requestSend(val)
+      
+    // }
+</script>
+
+<style>
+  html {
+    display: flex;
+    justify-content: center;
+  }
+
+  .main {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+
+    max-width: 80%;
+    border: solid 1px black;
+    border-radius: 5px;
+    background-color: white;
+    padding: 5px;
+  }
+</style>
+
+<body class="main">
+  <h1>Accès au formulaire de vote pour le logo du pull du CMS</h1>
+  <h2>(le vote est accessible uniquement aux étudiants du CMS)</h2>
+  <form id="form" onsubmit="handleFormSubmit(this)">
+    <label for="email">Veuillez entrer votre email <b>EPFL</b>. Format: prenom.nom@epfl.ch</label>
+    <input id="email" type="text"/>
+    <input type="submit" value="Envoyer">
+  </form>
+
+  <p id="retInfo"></p>
+</body>
+
+</html>
